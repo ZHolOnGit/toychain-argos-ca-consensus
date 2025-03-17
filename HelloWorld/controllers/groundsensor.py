@@ -7,7 +7,7 @@ from aux import Vector2D
 
 class GroundSensor(object):
     """ Set up a ground-sensor data acquisition loop on a background thread
-    The __sensing() method will be started and it will run in the background
+    The __sensing() method will be started, and it will run in the background
     until the application exits.
     """
     def __init__(self, robot, freq = 20):

@@ -33,19 +33,19 @@ class BlockchainGUI:
 
         self.tree = ttk.Treeview(root, columns=("Height", "Miner", "Difficulty", "Total Diff", "Block Hash", "Timestamp"), show="headings")
 
-        # Configuração das colunas
+        # Configuration of the columns
         for col in ("Height", "Miner", "Difficulty", "Total Diff", "Block Hash", "Timestamp"):
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100, anchor="center")
 
         self.tree.pack(fill=tk.BOTH, expand=True)
 
-        # Inicia a atualização periódica da árvore
+        # Start periodic updating of the tree
         self.update_treeview()
     
 
     def update_treeview(self):
-        """ Atualiza a exibição da lista de blocos e agenda próxima atualização. """
+        """ Update the display of the block list and upcoming agenda update. """
         self.tree.delete(*self.tree.get_children())  # Limpa a tabela
 
         for block in self.node.chain:
@@ -53,7 +53,7 @@ class BlockchainGUI:
                 block.height, block.miner_id, block.difficulty, block.total_difficulty, block.hash, block.timestamp
             ))
 
-        # Atualiza a cada 2 segundos (2000 ms)
+        # Updates every 2 seconds (2000 ms)
 
 
         self.root.after(2000, self.update_treeview)

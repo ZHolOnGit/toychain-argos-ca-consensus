@@ -2,7 +2,8 @@
 import random, math
 import time
 import logging
-from controllers.utils import Vector2D
+
+from HelloNeighbor.controllers.utils import Vector2D
 
 tps = 10
 

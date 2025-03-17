@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+import os
 # /* Import Packages */
 #######################################################################
-import random, math
-import time, sys, os
-import json
+import random
+import sys
 
 mainFolder = os.environ['MAINFOLDER']
 experimentFolder = os.environ['EXPERIMENTFOLDER']
@@ -41,6 +41,9 @@ global clocks, counters, logs, txs
 clocks, counters, logs, txs = dict(), dict(), dict(), dict()
 
 GENESIS = Block(0, 0000, [], [gen_enode(i+1) for i in range(int(lp['environ']['NUMROBOTS']))], 0, 0, 0, nonce = 1, state = State())
+
+#This line generates the enode for all the robots in the simulation
+print([gen_enode(i+1) for i in range(int(lp['environ']['NUMROBOTS']))])
 
 # /* Logging Levels for Console and File */
 #######################################################################
@@ -164,9 +167,10 @@ def controlstep():
 
     def peering():
 
-        # Get the current peers from erb if they have higher difficulty chain
+        # Get the current peers from erb if they have higher difficulty chain, or if they have a different mempool hash, indicating that they
+        #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
         erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
-
+        print(erb_enodes)
         # Add peers on the toychain
         for enode in erb_enodes-set(w3.peers):
             try:
@@ -229,9 +233,11 @@ def controlstep():
         # if logs['resources'].query():
         #     logs['resources'].log([len(rb)])
 
+        #TODO: find out what these clocks do
         if clocks['peering'].query():
             peering()
 
+        #TODO: find some way to access these C++ functions, hiding in the argos files?
         # Update blockchain state on the robot C++ object
         last_block = w3.get_block('last')
         robot.variables.set_attribute("block", str(last_block.height))
@@ -250,7 +256,7 @@ def controlstep():
         #########################################################################################################
         if fsm.query(States.IDLE):
 
-            fsm.setState(States.RANDOM, message = "Walking randomely to meet peers")
+            fsm.setState(States.RANDOM, message = "Walking randomly to meet peers")
 
         #########################################################################################################
         #### State::RANDOM
@@ -258,9 +264,10 @@ def controlstep():
         if fsm.query(States.RANDOM):
 
             rw.step()
-
+            #TODO: This is where the neighbour selection local rule will be placed
             if erb.peers:
                 neighbor = random.choice(erb.peers)
+                print(neighbor)
                 fsm.setState(States.TRANSACT, message = f"Greeting peer {neighbor.id}", pass_along=neighbor)
                 
         #########################################################################################################
@@ -270,12 +277,13 @@ def controlstep():
         elif fsm.query(States.TRANSACT):
 
             rw.step()
-
+            #Will have to create different transactions for Leader selection,
             if not txs['hi']:
                 neighbor = fsm.pass_along
 
                 txdata = {'function': 'Hello', 'inputs': [neighbor.id]}
-                txs['hi'] = Transaction(sender = me.id, data = txdata, timestamp = w3.custom_timer.time())
+                txs['hi'] = Transaction(sender = me.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
+                txs['hi'].add_signature(w3.private_key, w3.public_key, w3.id, neighbor.id)
                 w3.send_transaction(txs['hi'])
 
             if w3.get_transaction_receipt(txs['hi'].id):

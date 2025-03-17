@@ -1,5 +1,5 @@
 # [PATHS]
-export HOMEFOLDER="$HOME"
+export HOMEFOLDER="$HOME/arg"
 export MAINFOLDER="$HOMEFOLDER/toychain-argos"
 export DOCKERFOLDER="$MAINFOLDER/argos-blockchain-sm"
 export ARGOSFOLDER="$MAINFOLDER/argos-python"
@@ -27,7 +27,7 @@ export SWARMNAME=ethereum
 export CONTAINERBASE=${SWARMNAME}_eth
 
 # [ARGOS]
-export NUMROBOTS=6
+export NUMROBOTS=10
 export CON1="${EXPERIMENTFOLDER}/controllers/main.py"
 
 

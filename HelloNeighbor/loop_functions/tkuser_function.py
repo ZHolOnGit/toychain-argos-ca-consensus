@@ -15,7 +15,7 @@ class BlockchainGUI:
         self.tree = ttk.Treeview(self.root, show="headings")  # Empty at start
         self.tree.pack(fill=tk.BOTH, expand=True)
 
-        # Inicia a atualização periódica da árvore
+        # Start periodic updating of the tree
         self.update_treeview()
 
     def start(self):

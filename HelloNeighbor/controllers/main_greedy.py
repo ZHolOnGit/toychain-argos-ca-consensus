@@ -3,13 +3,13 @@
 
 # /* Import Packages */
 #######################################################################
-import random, math
-import time, sys, os
+import math
+import os
+import random
+import sys
 
-import json
 experimentFolder = os.environ['EXPERIMENTFOLDER']
 sys.path += [os.environ['MAINFOLDER'], \
-             os.environ['EXPERIMENTFOLDER']+'/controllers', \
              os.environ['EXPERIMENTFOLDER']
             ]
 
@@ -24,11 +24,8 @@ from controllers.statemachine import *
 from controllers.control_params import params as cp
 from loop_functions.loop_params import params as lp
 
-from toychain.src.utils.helpers import gen_enode
 from toychain.src.consensus.ProofOfAuth import ProofOfAuthority
-from toychain.src.consensus.ProofOfWork import ProofOfWork
 from toychain.src.Node import Node
-from toychain.src.Block import Block
 from toychain.src.Transaction import Transaction
 
 # /* Global Variables */

@@ -12,8 +12,10 @@ import os
 from math import sqrt
 from random import uniform
 import os
-arena_size = os.environ["ARENADIM"]
+# arena_size = os.environ["ARENADIM"]
+arena_size = 4
 print(arena_size)
+
 
 np.random.seed(seed=1)
 
@@ -89,13 +91,13 @@ def create_market_resources(market_percent_size, number_resources, quality_range
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
     plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
     plt.margins(0,0)
-    # ax.add_patch(Rectangle((0.5-market_percent_size/2, 0.5-market_percent_size/2), market_percent_size, market_percent_size, color="yellow"))
-    # f = open('resources.txt', 'w+')
-    # for i in range(0,number_resources):
-    #     circle_quality = round(uniform(quality_range[0],quality_range[1]), 2)
-    #     circle_center = (uniform(0,1), uniform(0,1))
-    #     ax.add_patch(Circle(circle_center, circle_quality, color="red"))
-    #     f.write(' '.join([str(round(x,2)) for x in circle_center])+ ' ' + str(round(circle_quality,2))+'\n')
+    ax.add_patch(Rectangle((0.5-market_percent_size/2, 0.5-market_percent_size/2), market_percent_size, market_percent_size, color="yellow"))
+    f = open('resources.txt', 'w+')
+    for i in range(0,number_resources):
+        circle_quality = round(uniform(quality_range[0],quality_range[1]), 2)
+        circle_center = (uniform(0,1), uniform(0,1))
+        ax.add_patch(Circle(circle_center, circle_quality, color="red"))
+        f.write(' '.join([str(round(x,2)) for x in circle_center])+ ' ' + str(round(circle_quality,2))+'\n')
     
 
     # Save as png

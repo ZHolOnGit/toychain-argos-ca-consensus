@@ -14,6 +14,7 @@ from controllers.actusensors.groundsensor import Resource
 from controllers.utils import Vector2D
 from controllers.params import params as cp
 from loop_functions.params import params as lp
+from loop_functions.tkuser_function import BlockchainGUI
 
 lp['generic']['show_rays'] = False
 lp['generic']['show_pos'] = True
@@ -46,7 +47,6 @@ def hash_to_rgb(hash_value):
 #######################################################################
 
 if lp['generic']['tkuser']:
-    from loop_functions.tkuser_function import BlockchainGUI
     import threading
 
     def run_tkuser():

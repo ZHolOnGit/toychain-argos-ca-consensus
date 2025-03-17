@@ -1,10 +1,7 @@
-from copy import copy
-import sys, os
+import logging
 
-from toychain.src.utils.helpers import compute_hash, transaction_to_dict
 from toychain.src.State import StateMixin
 
-import logging
 logger = logging.getLogger('sc')
 
 class Contract(StateMixin):

@@ -1,5 +1,5 @@
 # [PATHS]
-export HOMEFOLDER="$HOME"
+export HOMEFOLDER="$HOME/arg"
 export MAINFOLDER="$HOMEFOLDER/toychain-argos"
 export ARGOSFOLDER="$MAINFOLDER/argos-python"
 export TOYCHFOLDER="$MAINFOLDER/toychain"
@@ -20,7 +20,7 @@ export SCFILE="${EXPERIMENTFOLDER}/scs/${SCNAME}.py"
 export GENESISFILE="${DOCKERFOLDER}/geth/files/$GENESISNAME.json"
 
 # [ARGOS]
-export NUM1=9
+export NUM1=3
 export CON1="${EXPERIMENTFOLDER}/controllers/main.py"
 
 export NUM2=0

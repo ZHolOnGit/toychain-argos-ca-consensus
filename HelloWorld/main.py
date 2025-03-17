@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 # This is the main control loop running in each argos robot
 
+import os
 # /* Import Packages */
 #######################################################################
-import random, math
-import time, sys, os
+import random
+import sys
 
-import json
 experimentFolder = os.environ['EXPERIMENTFOLDER']
 sys.path += [os.environ['MAINFOLDER'], \
              os.environ['EXPERIMENTFOLDER']+'/controllers', \
              os.environ['EXPERIMENTFOLDER']
             ]
 
-from controllers.movement import RandomWalk, Navigate, Odometry, OdoCompass, GPS
+from controllers.movement import RandomWalk, Navigate, OdoCompass, GPS
 from controllers.groundsensor import ResourceVirtualSensor, Resource
 from controllers.erandb import ERANDB
 from controllers.rgbleds import RGBLEDs
 from controllers.aux import *
-from controllers.aux import Timer
 from controllers.statemachine import *
 
 from controllers.control_params import params as cp
@@ -26,7 +25,7 @@ from loop_functions.loop_params import params as lp
 
 from toychain.src.Node import Node
 from toychain.src.Block import Block, State
-from toychain.src.utils import gen_enode
+from toychain.src.utils.helpers import gen_enode
 
 from toychain.src.consensus.ProofOfAuth import ProofOfAuthority
 from toychain.src.Transaction import Transaction

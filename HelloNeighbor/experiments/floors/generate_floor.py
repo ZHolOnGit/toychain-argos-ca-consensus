@@ -12,22 +12,23 @@ import os
 from math import sqrt
 from random import uniform
 import os
-arena_size = os.environ["ARENADIM"]
-print(arena_size)
 
 np.random.seed(seed=1)
 
 percentage_white = 0.25
-tiles_per_side_list = [22, 31, 38]
-#tiles_per_side_list = [10]
+# tiles_per_side_list = [22, 31, 38] #List of different grid sizes to generate
+tiles_per_side_list = [7]
 
 def create_shuffled_matrix(tiles_per_side):
+    """Creates a randomly shuffled matrix of tiles per side."""
 
+    #calculate the total number of tiles and the distribution of black and white tiles
     total_tiles = tiles_per_side ** 2
     percentage_black = 1 - percentage_white
     total_white = total_tiles * percentage_white
     total_black = total_tiles * percentage_black
-    
+
+    #Creates arrays for black and white tiles, then combines them
     white_tiles_array = np.zeros(int(total_white))
     black_tiles_array = np.ones(int(total_black))
     total_tiles_array = np.append(white_tiles_array, black_tiles_array)
@@ -35,12 +36,15 @@ def create_shuffled_matrix(tiles_per_side):
 
     np.random.shuffle(total_tiles_array)
 
-    # Check if one tile is missing
+    # Check if one tile is missing, due to rounding error
     if (len(total_tiles_array) == total_tiles - 1):
         total_tiles_array = np.append(total_tiles_array, 1.0)
         print("Missing one tile")
+
+    #Reshape the 1D array into 2D matrix, F is column major order
     X = total_tiles_array.reshape((tiles_per_side, tiles_per_side), order='F')
-        
+
+
     fig = plt.figure()
     plt.xticks([])
     plt.yticks([])
@@ -89,6 +93,8 @@ def create_market_resources(market_percent_size, number_resources, quality_range
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
     plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
     plt.margins(0,0)
+
+
     # ax.add_patch(Rectangle((0.5-market_percent_size/2, 0.5-market_percent_size/2), market_percent_size, market_percent_size, color="yellow"))
     # f = open('resources.txt', 'w+')
     # for i in range(0,number_resources):
@@ -113,6 +119,5 @@ def main_market():
     create_market_resources(0.2,5,[0.02,0.1])
 
 if __name__ == "__main__":
-    # main_shuffled_matrix()
-    main_market()
+    main_shuffled_matrix()
 

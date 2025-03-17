@@ -29,6 +29,9 @@ class Peer(object):
         self.timeout = 0
         self.timeoutStamp = 0
 
+        #Crytographic stuff
+        self.public_key = None
+
     @property
     def age(self):
         return time.time()-self.tStamp
@@ -62,7 +65,7 @@ class Peer(object):
 
 class ERANDB(object):
     """ Set up erandb transmitter on a background thread
-    The __listen() method will be started and it will run in the background
+    The __listen() method will be started, and it will run in the background
     until the application exits.
     """
     def __init__(self, robot, dist = 200, tFreq = 0):
@@ -86,6 +89,7 @@ class ERANDB(object):
 
         # /* Get a new peer ID */
         for data in self.getData():
+            # print("Data in erb step", data)
             newId=data[0]
 
             if newId != self.id: 
@@ -93,11 +97,13 @@ class ERANDB(object):
 
         self.peers = []
         for reading in self.robot.epuck_range_and_bearing.get_readings():
+            #reading[0] is "data", reading[1] is "range", reading[2] is "bearing"
             self.peers.append(Peer(reading[0], reading[1], reading[2]))
 
 
     def getData(self):
         readings = self.robot.epuck_range_and_bearing.get_readings()
+        # print(f"Readings getData", readings)
         return [reading[0] for reading in readings]
 
     def getRanges(self):

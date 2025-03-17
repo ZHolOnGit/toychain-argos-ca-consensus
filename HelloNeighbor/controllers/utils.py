@@ -71,9 +71,9 @@ class FiniteStateMachine(object):
         self.storage   = None
         self.prevState = start
         self.currState = start
-        self.accumTime = dict()
+        self.accumTime = dict() #Tracks the time spent in the different states?
         self.startTime = time.time()
-        self.pass_along = None
+        self.pass_along = None #The neighbour, whose interaction with the node is changing the state?
         
     def setStorage(self,storage = None):
         self.storage = storage
@@ -350,7 +350,7 @@ class TicToc(object):
 #         self.running = False
 #         logger.info('TCP server is OFF') 
 
-# class TCP_server(object):
+class TCP_server(object):
     """ Set up TCP_server on a background thread
     The __hosting() method will be started and it will run in the background
     until the application exits.
