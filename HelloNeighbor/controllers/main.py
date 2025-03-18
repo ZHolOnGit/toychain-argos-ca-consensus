@@ -170,8 +170,7 @@ def controlstep():
         # Get the current peers from erb if they have higher difficulty chain, or if they have a different mempool hash, indicating that they
         #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
         erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
-        print(erb_enodes)
-        # Add peers on the toychain
+        # Add peers on the toychain`-
         for enode in erb_enodes-set(w3.peers):
             try:
                 w3.add_peer(enode)
@@ -284,6 +283,7 @@ def controlstep():
                 txdata = {'function': 'Hello', 'inputs': [neighbor.id]}
                 txs['hi'] = Transaction(sender = me.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 txs['hi'].add_signature(w3.private_key, w3.public_key, w3.id, neighbor.id)
+                txs['hi'].sig_chain_to_json()
                 w3.send_transaction(txs['hi'])
 
             if w3.get_transaction_receipt(txs['hi'].id):
