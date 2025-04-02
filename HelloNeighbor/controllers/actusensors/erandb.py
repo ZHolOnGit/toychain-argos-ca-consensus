@@ -86,6 +86,7 @@ class ERANDB(object):
 
     def step(self):
         """ This method runs in the background until program is closed """
+        #TODO, this adds all of the nodes inside the defined range as a peer
 
         # /* Get a new peer ID */
         for data in self.getData():

@@ -744,9 +744,7 @@ def destroy():
                 block.timestamp, 
                 block.height, 
                 block.hash, 
-                block.parent_hash, 
-                block.difficulty,
-                block.total_difficulty, 
+                block.parent_hash,
                 sys.getsizeof(block) / 1024, 
                 len(block.data), 
                 0

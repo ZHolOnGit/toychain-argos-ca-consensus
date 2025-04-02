@@ -6,9 +6,16 @@ import os
 import random
 import sys
 
+
+
 mainFolder = os.environ['MAINFOLDER']
 experimentFolder = os.environ['EXPERIMENTFOLDER']
 sys.path += [mainFolder, experimentFolder]
+
+num_neighbours = int(os.environ['NUMNEIGHBOURS'])
+if num_neighbours <= 1:
+    num_neighbours = 2
+print(f"num neighbours: {num_neighbours}")
 
 from controllers.actusensors.movement     import RandomWalk, Navigate, Odometry, OdoCompass, GPS
 from controllers.actusensors.groundsensor import ResourceVirtualSensor, Resource
@@ -22,7 +29,7 @@ from controllers.params import params as cp
 from loop_functions.params import params as lp
 
 from toychain.src.utils.helpers import gen_enode
-from toychain.src.consensus.ProofOfAuth import ProofOfAuthority, BLOCK_PERIOD
+from toychain.src.consensus.ProofOfRelay import ProofOfRelay, BLOCK_PERIOD
 from toychain.src.Node import Node
 from toychain.src.Block import Block, State
 from toychain.src.Transaction import Transaction
@@ -40,10 +47,10 @@ txList, tripList, submodules = [], [], []
 global clocks, counters, logs, txs
 clocks, counters, logs, txs = dict(), dict(), dict(), dict()
 
-GENESIS = Block(0, 0000, [], [gen_enode(i+1) for i in range(int(lp['environ']['NUMROBOTS']))], 0, 0, 0, nonce = 1, state = State())
+GENESIS = Block(0, 0000, [], None, 0, nonce=0, state = State())
 
 #This line generates the enode for all the robots in the simulation
-print([gen_enode(i+1) for i in range(int(lp['environ']['NUMROBOTS']))])
+#print([gen_enode(i+1) for i in range(int(lp['environ']['NUMROBOTS']))])
 
 # /* Logging Levels for Console and File */
 #######################################################################
@@ -103,7 +110,7 @@ def init():
 
     # /* Init web3.py */
     robot.log.info('Initialising Python Geth Console...')
-    w3 = Node(robotID, robotIP, 1233 + int(robotID), ProofOfAuthority(genesis = GENESIS))
+    w3 = Node(robotID, robotIP, 1233 + int(robotID), ProofOfRelay(genesis = GENESIS))
 
     # /* Init an instance of peer for this Pi-Puck */
     me = Peer(robotID, robotIP, w3.enode, w3.key)
@@ -169,16 +176,18 @@ def controlstep():
 
         # Get the current peers from erb if they have higher difficulty chain, or if they have a different mempool hash, indicating that they
         #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
-        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
+        #erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
+        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers} #TODO: add in neighbour selection
+        select_neighbours = set(random.sample(list(erb_enodes), num_neighbours))
         # Add peers on the toychain`-
-        for enode in erb_enodes-set(w3.peers):
+        for enode in select_neighbours-set(w3.peers):
             try:
                 w3.add_peer(enode)
             except Exception as e:
                 raise e
             
         # Remove peers from the toychain
-        for enode in set(w3.peers)-erb_enodes:
+        for enode in set(w3.peers)-select_neighbours:
             try:
                 w3.remove_peer(enode)
             except Exception as e:
@@ -222,6 +231,7 @@ def controlstep():
         
         # Perform submodules step
         for module in submodules:
+            #In this step, the ERAND
             module.step()
 
         # Perform clock steps
@@ -240,21 +250,18 @@ def controlstep():
         # Update blockchain state on the robot C++ object
         last_block = w3.get_block('last')
         robot.variables.set_attribute("block", str(last_block.height))
-        robot.variables.set_attribute("tdiff", str(last_block.total_difficulty))
         robot.variables.set_attribute("prod_block", w3.get_produced_block())
         robot.variables.set_attribute("block_hash", str(last_block.hash))
         robot.variables.set_attribute("state_hash", str(last_block.state.state_hash))
         robot.variables.set_attribute("mempl_hash", w3.mempool_hash(astype='str'))
         robot.variables.set_attribute("mempl_size", str(len(w3.mempool)))
 
-        erb.setData(last_block.total_difficulty, indices=[1,2])
         erb.setData(w3.mempool_hash(astype='int'), indices=3)
 
         #########################################################################################################
         #### State::IDLE
         #########################################################################################################
         if fsm.query(States.IDLE):
-
             fsm.setState(States.RANDOM, message = "Walking randomly to meet peers")
 
         #########################################################################################################
@@ -265,8 +272,9 @@ def controlstep():
             rw.step()
             #TODO: This is where the neighbour selection local rule will be placed
             if erb.peers:
+                print(erb.peers)
                 neighbor = random.choice(erb.peers)
-                print(neighbor)
+                #print(neighbor, "Neighbour")
                 fsm.setState(States.TRANSACT, message = f"Greeting peer {neighbor.id}", pass_along=neighbor)
                 
         #########################################################################################################
@@ -276,15 +284,18 @@ def controlstep():
         elif fsm.query(States.TRANSACT):
 
             rw.step()
-            #Will have to create different transactions for Leader selection,
+            #Will have to create different transactions for Leader selection, or at least add tags to them
+            #Add the created transaction to the mempool?
             if not txs['hi']:
-                neighbor = fsm.pass_along
+                neighbor = fsm.pass_along # It seems the destination selection has already been done for me
 
+                #TODO: Change txdata to reflect the ground recordings, have smart contracts for aggregation, and voting?
                 txdata = {'function': 'Hello', 'inputs': [neighbor.id]}
-                txs['hi'] = Transaction(sender = me.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
-                txs['hi'].add_signature(w3.private_key, w3.public_key, w3.id, neighbor.id)
-                txs['hi'].sig_chain_to_json()
+                txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
+                # txs['hi'].add_signature(w3.private_key, w3.public_key, w3.id, neighbor.id)
+                # txs['hi'].sig_chain_to_json()
                 w3.send_transaction(txs['hi'])
+                print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")
 
             if w3.get_transaction_receipt(txs['hi'].id):
                 txs['hi'] = None
@@ -323,9 +334,7 @@ def destroy():
                 block.timestamp, 
                 block.height, 
                 block.hash, 
-                block.parent_hash, 
-                block.difficulty,
-                block.total_difficulty, 
+                block.parent_hash,
                 sys.getsizeof(block) / 1024, 
                 len(block.data), 
                 0

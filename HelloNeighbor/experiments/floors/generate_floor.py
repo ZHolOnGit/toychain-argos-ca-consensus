@@ -5,13 +5,10 @@ This script creates a random floor layout/patterns and saves the
 pattern as .png image and as .csv file.
 """
 
-import numpy as np
+import os
+
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, Circle
-import os
-from math import sqrt
-from random import uniform
-import os
+import numpy as np
 
 np.random.seed(seed=1)
 

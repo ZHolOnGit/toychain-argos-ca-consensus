@@ -2,7 +2,7 @@
 import math, time
 import sys, os
 from aenum import Enum, auto
-# import socket, threading
+import socket, threading
 # from multiprocessing.connection import Listener, Client
 
 mainFolder, experimentFolder = os.environ['MAINFOLDER'], os.environ['EXPERIMENTFOLDER']

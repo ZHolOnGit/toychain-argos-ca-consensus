@@ -31,10 +31,10 @@ class BlockchainGUI:
         self.root.title("Blockchain Viewer")
         self.root.geometry("700x400")
 
-        self.tree = ttk.Treeview(root, columns=("Height", "Miner", "Difficulty", "Total Diff", "Block Hash", "Timestamp"), show="headings")
+        self.tree = ttk.Treeview(root, columns=("Height", "Miner", "Block Hash", "Timestamp"), show="headings")
 
         # Configuration of the columns
-        for col in ("Height", "Miner", "Difficulty", "Total Diff", "Block Hash", "Timestamp"):
+        for col in ("Height", "Miner", "Block Hash", "Timestamp"):
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100, anchor="center")
 
@@ -50,7 +50,7 @@ class BlockchainGUI:
 
         for block in self.node.chain:
             self.tree.insert("", "end", values=(
-                block.height, block.miner_id, block.difficulty, block.total_difficulty, block.hash, block.timestamp
+                block.height, block.miner_id, block.hash, block.timestamp
             ))
 
         # Updates every 2 seconds (2000 ms)

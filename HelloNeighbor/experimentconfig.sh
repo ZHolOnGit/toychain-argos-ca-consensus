@@ -20,7 +20,7 @@ export SCFILE="${EXPERIMENTFOLDER}/scs/${SCNAME}.py"
 export GENESISFILE="${DOCKERFOLDER}/geth/files/$GENESISNAME.json"
 
 # [ARGOS]
-export NUM1=3
+export NUM1=5
 export CON1="${EXPERIMENTFOLDER}/controllers/main.py"
 
 export NUM2=0
@@ -32,6 +32,8 @@ export TPS=10
 export DENSITY="2"
 
 export NUMROBOTS=$(echo $NUM1+$NUM2 | bc)
+#Currently 'ideal' number of relays is set to 4, pretty arbitrary,
+export NUMNEIGHBOURS=$(echo "($NUMROBOTS / 4) + 0.5" | bc | cut -d'.' -f1)
 export ARENADIM=$(echo "scale=3 ; sqrt($NUMROBOTS/$DENSITY)" | bc)
 export ARENADIMH=$(echo "scale=3 ; $ARENADIM/2" | bc)
 export STARTDIM=$(echo "scale=3 ; $ARENADIM/5" | bc)
