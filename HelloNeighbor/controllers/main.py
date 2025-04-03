@@ -68,7 +68,7 @@ clocks['block']   = Timer(BLOCK_PERIOD)
 #######################################################################
 
 class States(Enum):
-    IDLE   = 1
+    IDLE   =   1
     TRANSACT = 9
     RANDOM   = 10
 
@@ -178,7 +178,11 @@ def controlstep():
         #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
         #erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
         erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers} #TODO: add in neighbour selection
-        select_neighbours = set(random.sample(list(erb_enodes), num_neighbours))
+        if len(erb_enodes) > num_neighbours: # Same difference if the equality is included i guess
+            select_neighbours = set(random.sample(list(erb_enodes), num_neighbours))
+        else:
+            select_neighbours = erb_enodes
+            print(f"out of range {len(select_neighbours), w3.id}")
         # Add peers on the toychain`-
         for enode in select_neighbours-set(w3.peers):
             try:
@@ -272,7 +276,6 @@ def controlstep():
             rw.step()
             #TODO: This is where the neighbour selection local rule will be placed
             if erb.peers:
-                print(erb.peers)
                 neighbor = random.choice(erb.peers)
                 #print(neighbor, "Neighbour")
                 fsm.setState(States.TRANSACT, message = f"Greeting peer {neighbor.id}", pass_along=neighbor)
@@ -289,7 +292,7 @@ def controlstep():
             if not txs['hi']:
                 neighbor = fsm.pass_along # It seems the destination selection has already been done for me
 
-                #TODO: Change txdata to reflect the ground recordings, have smart contracts for aggregation, and voting?
+                #TODO: Change txdata to reflect the ground recordings, have smart contracts for aggregation
                 txdata = {'function': 'Hello', 'inputs': [neighbor.id]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 # txs['hi'].add_signature(w3.private_key, w3.public_key, w3.id, neighbor.id)
