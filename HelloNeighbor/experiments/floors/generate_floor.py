@@ -12,11 +12,10 @@ import numpy as np
 
 np.random.seed(seed=1)
 
-percentage_white = 0.25
 # tiles_per_side_list = [22, 31, 38] #List of different grid sizes to generate
-tiles_per_side_list = [7]
 
-def create_shuffled_matrix(tiles_per_side):
+
+def create_shuffled_matrix(tiles_per_side, percentage_white):
     """Creates a randomly shuffled matrix of tiles per side."""
 
     #calculate the total number of tiles and the distribution of black and white tiles
@@ -56,27 +55,27 @@ def create_shuffled_matrix(tiles_per_side):
     plt.margins(0,0)
 
     # Save as png
-    img_name = str(tiles_per_side) + ".png"
+    img_name = str(percentage_white) + ".png"
     print("Saving image to " + img_name)
     plt.savefig(img_name, bbox_inches = 'tight')
-
-    # Save as pdf
-    img_name_pdf = str(tiles_per_side) + ".pdf"
-    print("Saving image to " + img_name_pdf)
-    plt.savefig(img_name_pdf, bbox_inches = 'tight')
-
-    # Save as svg
-    img_name_svg = str(tiles_per_side) + ".svg"
-    print("Saving image to " + img_name_svg)
-    plt.savefig(img_name_svg, bbox_inches = 'tight')    
-    
-    # Save as csv
-    csv_name = str(tiles_per_side) + ".csv"
-    np.savetxt(csv_name, total_tiles_array, delimiter='\n', fmt='%d')
+    #
+    # # Save as pdf
+    # img_name_pdf = str(tiles_per_side) + ".pdf"
+    # print("Saving image to " + img_name_pdf)
+    # plt.savefig(img_name_pdf, bbox_inches = 'tight')
+    #
+    # # Save as svg
+    # img_name_svg = str(tiles_per_side) + ".svg"
+    # print("Saving image to " + img_name_svg)
+    # plt.savefig(img_name_svg, bbox_inches = 'tight')
+    #
+    # # Save as csv
+    # csv_name = str(tiles_per_side) + ".csv"
+    # np.savetxt(csv_name, total_tiles_array, delimiter='\n', fmt='%d')
     
     # Remove white space around the image
     os.system('convert ' + img_name +  ' -trim ' + img_name)
-    print("Saving CSV layout file to " + csv_name)
+    # print("Saving CSV layout file to " + csv_name)
     
 
 def create_market_resources(market_percent_size, number_resources, quality_range):  
@@ -108,8 +107,10 @@ def create_market_resources(market_percent_size, number_resources, quality_range
 
 
 def main_shuffled_matrix():
-    for tiles_per_side in tiles_per_side_list:
-        create_shuffled_matrix(tiles_per_side)
+    tiles_per_side = 20
+    percentage_white_list = [a/10 for a in range(1,8)]
+    for white in percentage_white_list:
+        create_shuffled_matrix(tiles_per_side, white)
         
 
 def main_market():

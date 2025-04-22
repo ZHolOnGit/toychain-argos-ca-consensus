@@ -27,7 +27,7 @@ loopconfig() {
 copy() {
 	# Collect the config from results
 	cp $DATAFOLDER/experiment_${1}/001/experimentconfig.sh .
-	cp $DATAFOLDER/experiment_${1}/001/controller_params.py controllers/
+	cp $DATAFOLDER/experiment_${1}/001/controller_params.py controllers/ #Not sure if these bottom 2 are in there
 	cp $DATAFOLDER/experiment_${1}/001/loop_function_params.py loop_functions/
 }
 
@@ -35,17 +35,17 @@ copy() {
 ### Copy a configuration from a previously run experiment in a remote server.
 ### USAGE:   import "experimentName/configName"
 ### EXAMPLE: import "test116_patchy/20_blockchain1"
-import() {
-	# Collect the config from results
-	SSHHOST="eksander@esme"
-	SSHSOCKET=~/.ssh/$SSHHOST
-	
-	ssh -M -f -N -o ControlPath=$SSHSOCKET $SSHHOST
-	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/experimentconfig.sh .
-	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/controller_params.py controllers/
-	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/loop_function_params.py loop_functions/
-	ssh -S $SSHSOCKET -O exit $SSHHOST
-}
+#import() {
+#	# Collect the config from results
+#	SSHHOST="eksander@esme"
+#	SSHSOCKET=~/.ssh/$SSHHOST
+#
+#	ssh -M -f -N -o ControlPath=$SSHSOCKET $SSHHOST
+#	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/experimentconfig.sh .
+#	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/controller_params.py controllers/
+#	scp -o ControlPath=$SSHSOCKET $SSHHOST:$DATAFOLDER/experiment_${1}/001/loop_function_params.py loop_functions/
+#	ssh -S $SSHSOCKET -O exit $SSHHOST
+#}
 
 ##################################################################################
 ### Run an experiment for the number of repetitions given in experimentconfig.sh
@@ -53,6 +53,7 @@ import() {
 ### EXAMPLE: run "test116_patchy/20_blockchain1"
 run() {
 
+  config "FLOORNAME" "${1}.png"
 	# Configure experiment
 	. experimentconfig.sh
 
@@ -63,7 +64,7 @@ run() {
 
 	else
 		for REP in $(seq 1 ${REPS}); do
-			echo "Runing experiment ${1}"
+			echo "Running experiment ${1}"
 
 			# Perform experiment
 			. starter -r -sz
@@ -79,17 +80,27 @@ run() {
 
 
 # DEFINE EXPERIMENT
-EXP=varyutil2
-config "REPS" 5
-config "LENGTH" 5000
-config "NOTES" "\"Variation of utility of the resource between 100 and 400\""
+EXP=test1
 
-for UTIL in $(seq 100 50 400); do 
-	CFG=${UTIL}
-	loopconfig "patches" "utility" "{'red': 1, 'green':  1, 'blue': ${UTIL}, 'yellow': 1}"
-	wait
-	run    "${EXP}/${CFG}"
+declare -a floor_arr=("0.1" "0.2" "0.3" "0.4" "0.5" "0.6" "0.7")
+
+#Doing 10 iterations could do more?
+config "REPS" 10
+config "LENGTH" 200
+#config "NOTES" "\"Variation of utility of the resource between 100 and 400\""
+for floor in "${floor_arr[@]}"; do
+  arena=${floor}
+  echo floor
+  echo "${arena}"
+  run "${arena}"
 done
+
+#for UTIL in $(seq 100 50 400); do
+#	CFG=${UTIL}
+#	#loopconfig "patches" "utility" "{'red': 1, 'green':  1, 'blue': ${UTIL}, 'yellow': 1}"
+#	wait
+#	run    "${EXP}/${CFG}"
+#done
 
 
 # # DEFINE CONFIGURATION 1

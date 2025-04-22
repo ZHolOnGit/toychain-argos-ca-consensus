@@ -35,10 +35,12 @@ from controllers.params import params as cp
 from loop_functions.params import params as lp
 from scs.greeter import Contract
 
-from toychain.src.consensus.ProofOfRelay import ProofOfRelay, BLOCK_PERIOD
+from toychain.src.consensus.ProofOfRelayByzantine import ProofOfRelayByzantine
+
 from toychain.src.Node import Node
 from toychain.src.Block import Block
 from toychain.src.Transaction import Transaction
+from toychain.src.utils.constants import BLOCK_PERIOD
 
 # /* Global Variables */
 #######################################################################
@@ -122,7 +124,7 @@ def init():
 
     # /* Init web3.py */
     robot.log.info('Initialising Python Geth Console...')
-    w3 = Node(robotID, robotIP, 1233 + int(robotID), ProofOfRelay(genesis = GENESIS))
+    w3 = Node(robotID, robotIP, 1233 + int(robotID), ProofOfRelayByzantine(genesis = GENESIS))
 
     # /* Init an instance of peer for this Pi-Puck */
     me = Peer(robotID, robotIP, w3.enode, w3.key)
@@ -187,7 +189,7 @@ def controlstep():
                 w3.add_peer(enode)
             except Exception as e:
                 raise e
-            
+
         # Remove peers from the toychain
         for enode in set(w3.peers)-select_neighbours:
             try:
@@ -269,9 +271,6 @@ def controlstep():
 
         erb.setData(w3.mempool_hash(astype='int'), indices=3)
 
-        if w3.id == '1' and (w3.custom_timer.time() % 100 == 0):
-            print(f"TIME {w3.custom_timer.time()}")
-
         #########################################################################################################
         #### State::IDLE
         #########################################################################################################
@@ -288,7 +287,7 @@ def controlstep():
                 neighbor = random.choice(erb.peers)
                 #print(neighbor, "Neighbour")
                 fsm.setState(States.TRANSACT, message = f"Greeting peer {neighbor.id}", pass_along=neighbor)
-                
+
         #########################################################################################################
         #### State::TRANSACT  
         #########################################################################################################
@@ -305,14 +304,14 @@ def controlstep():
             #Add the created transaction to the mempool?
             if not txs['hi'] and w3.mining_thread.state.value == 1:
                 neighbor = fsm.pass_along # It seems the destination selection has already been done for me
-                #TODO: Change txdata to reflect the ground recordings, have smart contracts for aggregation
-                txdata = {'function': 'Estimate', 'inputs': [gs.getAvg()]}
+                #Input skewed for byzantine robots
+                #TODO: does it make a difference if i set it to 1 or 0?
+                txdata = {'function': 'Estimate', 'inputs': [1]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 w3.send_transaction(txs['hi'])
                 print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")
-            #TODO: The trasaction is no
+
             if w3.get_transaction_receipt(txs['hi'].id) and w3.mining_thread.state.value == 1:
-                print(f"ONE PASS {txs['hi'].id}")
                 txs['hi'] = None
                 fsm.setState(States.RANDOM, message = "Transaction success")
 
@@ -322,7 +321,7 @@ def controlstep():
 
 def reset():
     global startFlag, initial_reading_flag
-    #TODO: figure out what needs to be reset, just call init again?
+    #this doesnt work, just call it again?
     """
     I think the block visuliser will still be there, fine?
     Things that need to be reset
@@ -354,8 +353,8 @@ def destroy():
         logs['block'] = Logger(f"{experimentFolder}/logs/{me.id}/{name}", header, ID = me.id)
 
         name   = 'sc.csv'
-        header = ['TIMESTAMP', 'BLOCK', 'HASH', 'PHASH', 'BALANCE', 'TX_COUNT', 'Estimate', 'Byzantine']
-        logs['sc'] = Logger(f"{experimentFolder}/logs/{me.id}/{name}", header, ID = me.id)
+        header = ['TIMESTAMP', 'BLOCK', 'HASH', 'PHASH', 'BALANCE', 'TX_COUNT', 'Estimate']
+        logs['sc'] = Logger(f"{experimentFolder}/logs/{me.id}/{name}", header, ID = me.id, )
 
         # Log each block over the operation of the swarm
         for block in w3.chain:
@@ -377,8 +376,7 @@ def destroy():
                 block.parent_hash, 
                 block.state.balances.get(me.id,0),
                 block.state.n,
-                block.state.frequency_estimate,
-                block.byzantine
+                block.state.frequency_estimate
                 ])
 
         

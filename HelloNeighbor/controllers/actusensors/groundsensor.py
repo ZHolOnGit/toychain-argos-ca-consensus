@@ -30,9 +30,9 @@ class GroundSensor(object):
 
         # Initialize variables
         self.groundValues = self.robot.epuck_ground.get_readings()
-
+        #The array seems to be the 'Left' 'Center' and 'Right' values, whatever that means, makes sense just to aggregate
         # Compute cumulative sum
-        self.groundCumsum[0] += self.groundValues[0] 
+        self.groundCumsum[0] += self.groundValues[0]
         self.groundCumsum[1] += self.groundValues[1]
         self.groundCumsum[2] += self.groundValues[2]
         self.count += 1
@@ -43,13 +43,13 @@ class GroundSensor(object):
 
         # Compute average
         try:
-            groundAverage =  [round(x/self.count) for x in self.groundCumsum]
+            groundAverage =  [round(x/self.count,4) for x in self.groundCumsum]
         except:
             groundAverage = None
 
         self.count = 0
         self.groundCumsum = [0 for x in range(3)]
-        return groundAverage
+        return sum(groundAverage) / len(groundAverage)
 
     def getNew(self):
         """ This method returns the instant ground value """

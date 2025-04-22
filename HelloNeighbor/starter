@@ -81,3 +81,5 @@ for opt in "$@"; do
     fi
 done
 
+#Command: clear && ./starter -r -s -l -p
+

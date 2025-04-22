@@ -74,6 +74,7 @@ def draw_in_robot():
         if prod_block:
             tkuser.add_block(prod_block)
 
+    #TODO: I have no ideas what these colours refer to
 
     # Draw block hash and state hash with circles
     color_state = hash_to_rgb(robot.variables.get_attribute("state_hash"))
@@ -82,9 +83,9 @@ def draw_in_robot():
     
     tx_count = int(robot.variables.get_attribute("mempl_size"))
 
-    environment.qt_draw.circle([0,0,0.010], [], 0.100, color_state, True)
-    environment.qt_draw.circle([0,0,0.011], [], 0.075, color_block, True)
-    environment.qt_draw.circle([0,0,0.012+0.002*tx_count], [], 0.050, color_mempl, True)
+    # environment.qt_draw.circle([0,0,0.010], [], 0.100, color_state, True)
+    # environment.qt_draw.circle([0,0,0.011], [], 0.075, color_block, True)
+    # environment.qt_draw.circle([0,0,0.012+0.002*tx_count], [], 0.050, color_mempl, True)
 
 
 def destroy():
