@@ -19,7 +19,6 @@ try:
         num_neighbours += 1
     if num_neighbours <= 1:
         num_neighbours = 3
-    print(f"num neighbours: {num_neighbours}")
 except ValueError:
     num_neighbours = 3
 
@@ -306,7 +305,9 @@ def controlstep():
                 neighbor = fsm.pass_along # It seems the destination selection has already been done for me
                 #Input skewed for byzantine robots
                 #TODO: does it make a difference if i set it to 1 or 0?
-                txdata = {'function': 'Estimate', 'inputs': [1]}
+
+                # txdata = {'function': 'Estimate', 'inputs': [1]}
+                txdata = {'function': 'Estimate', 'inputs': [round(random.random(),3)]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 w3.send_transaction(txs['hi'])
                 print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")
@@ -353,7 +354,7 @@ def destroy():
         logs['block'] = Logger(f"{experimentFolder}/logs/{me.id}/{name}", header, ID = me.id)
 
         name   = 'sc.csv'
-        header = ['TIMESTAMP', 'BLOCK', 'HASH', 'PHASH', 'BALANCE', 'TX_COUNT', 'Estimate']
+        header = ['TIMESTAMP', 'BLOCK', 'HASH', 'PHASH', 'BALANCE', 'TX_COUNT', 'Estimate', 'Byzantine']
         logs['sc'] = Logger(f"{experimentFolder}/logs/{me.id}/{name}", header, ID = me.id, )
 
         # Log each block over the operation of the swarm
@@ -376,7 +377,8 @@ def destroy():
                 block.parent_hash, 
                 block.state.balances.get(me.id,0),
                 block.state.n,
-                block.state.frequency_estimate
+                block.state.frequency_estimate,
+                block.byzantine
                 ])
 
         

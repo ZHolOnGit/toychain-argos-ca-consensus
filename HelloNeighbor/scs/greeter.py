@@ -22,7 +22,7 @@ class Contract(StateMixin):
             # Init your own state variables
             self.frequency_estimate = 0
             self.open_escrow = []
-            self.outlier_threshold = 0.3
+            self.outlier_threshold = 0.2
             self.consensus_reached = False
             self.consensus_threshold = 0.02
             self.escrow_count = 0
@@ -77,7 +77,6 @@ class Contract(StateMixin):
                         self.consensus_reached = True
                     else:
                         self.frequency_estimate = new_estimate
-        print(f"FREQUENCY ESTIMATE {self.frequency_estimate}")
 
 
 

@@ -108,7 +108,8 @@ def create_market_resources(market_percent_size, number_resources, quality_range
 
 def main_shuffled_matrix():
     tiles_per_side = 20
-    percentage_white_list = [a/10 for a in range(1,8)]
+    # percentage_white_list = [a/10 for a in range(1,8)]
+    percentage_white_list = [0]
     for white in percentage_white_list:
         create_shuffled_matrix(tiles_per_side, white)
         

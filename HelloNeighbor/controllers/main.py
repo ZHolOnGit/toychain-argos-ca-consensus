@@ -19,7 +19,6 @@ try:
         num_neighbours += 1
     if num_neighbours <= 1:
         num_neighbours = 3
-    print(f"num neighbours: {num_neighbours}")
 except ValueError:
     num_neighbours = 3
 
@@ -312,7 +311,6 @@ def controlstep():
                 print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")
             #TODO: The trasaction is no
             if w3.get_transaction_receipt(txs['hi'].id) and w3.mining_thread.state.value == 1:
-                print(f"ONE PASS {txs['hi'].id}")
                 txs['hi'] = None
                 fsm.setState(States.RANDOM, message = "Transaction success")
 
@@ -346,8 +344,8 @@ def destroy():
         if len(txs) != len(set([tx.id for tx in txs])):
             print(f'REPEATED TRANSACTIONS ON CHAIN: #{len(txs)-len(set([tx.id for tx in txs]))}')
 
-        for key, value in w3.sc.state.items():
-            print(f"{key}: {value}")
+        # for key, value in w3.sc.state.items():
+        #     print(f"{key}: {value}")
 
         name   = 'block.csv'
         header = ['TELAPSED','TIMESTAMP','BLOCK', 'HASH', 'PHASH', 'DIFF', 'TDIFF', 'SIZE','TXS', 'UNC', 'PENDING', 'QUEUED']

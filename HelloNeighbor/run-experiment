@@ -53,7 +53,9 @@ copy() {
 ### EXAMPLE: run "test116_patchy/20_blockchain1"
 run() {
 
-  config "FLOORNAME" "${1}.png"
+#  config "FLOORNAME" "${1}.png"
+  config "NUM1" ${1}
+  config "NUM2" ${2}
 	# Configure experiment
 	. experimentconfig.sh
 
@@ -70,9 +72,9 @@ run() {
 			. starter -r -sz
 
 			# Collect data
-			if [ $# -eq 1 ]; then
-			    bash collect-logs ${1}
-			fi
+#			if [ $# -eq 2 ]; then
+      bash collect-logs ${1}
+#			fi
 			
 		done
 	fi
@@ -82,18 +84,32 @@ run() {
 # DEFINE EXPERIMENT
 EXP=test1
 
-declare -a floor_arr=("0.1" "0.2" "0.3" "0.4" "0.5" "0.6" "0.7")
+declare -a floor_arr=("0" "0.1" "0.2" "0.3" "0.4" "0.5" "0.6" "0.7" "0.8" "0.9" "1")
+
+#declare -a byz_arr=(1 2 3 4 5 6 7 8)
+#declare -a norm_arr=(19 18 17 16 15 14 13 12)
+
+declare -a byz_arr=(15 16 17 18 19 20)
+declare -a norm_arr=(5 4 3 2 1)
+
 
 #Doing 10 iterations could do more?
 config "REPS" 10
 config "LENGTH" 200
 #config "NOTES" "\"Variation of utility of the resource between 100 and 400\""
-for floor in "${floor_arr[@]}"; do
-  arena=${floor}
-  echo floor
-  echo "${arena}"
-  run "${arena}"
+
+for i in $(seq 0 ${#byz_arr[@]}); do
+  echo ${byz_arr[i]}
+  run ${byz_arr[i]} ${norm_arr[i]}
 done
+
+#for floor in "${floor_arr[@]}"; do
+#  arena=${floor}
+#  run "${arena}"
+#done
+
+
+
 
 #for UTIL in $(seq 100 50 400); do
 #	CFG=${UTIL}
