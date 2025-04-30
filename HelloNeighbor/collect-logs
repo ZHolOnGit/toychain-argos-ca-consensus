@@ -8,7 +8,7 @@
 source experimentconfig.sh
 
 LOGSFOLDER="$EXPERIMENTFOLDER/logs/"
-DATAFOLDER="$EXPERIMENTFOLDER/results/data/byzantine_random_$1/"
+DATAFOLDER="$EXPERIMENTFOLDER/results/data/byzantine_binary_$1/"
 PLOTFOLDER="$EXPERIMENTFOLDER/results/plots/experiment_$1/"
 
 # Create the experiment directory

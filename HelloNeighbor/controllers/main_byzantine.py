@@ -307,7 +307,7 @@ def controlstep():
                 #TODO: does it make a difference if i set it to 1 or 0?
 
                 # txdata = {'function': 'Estimate', 'inputs': [1]}
-                txdata = {'function': 'Estimate', 'inputs': [round(random.random(),3)]}
+                txdata = {'function': 'Estimate', 'inputs': [0]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 w3.send_transaction(txs['hi'])
                 print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")

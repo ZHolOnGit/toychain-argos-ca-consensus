@@ -86,19 +86,21 @@ EXP=test1
 
 declare -a floor_arr=("0" "0.1" "0.2" "0.3" "0.4" "0.5" "0.6" "0.7" "0.8" "0.9" "1")
 
-#declare -a byz_arr=(1 2 3 4 5 6 7 8)
-#declare -a norm_arr=(19 18 17 16 15 14 13 12)
+declare -a byz_arr=(1 2 3 4 5 6 7 8)
+declare -a norm_arr=(19 18 17 16 15 14 13 12)
 
-declare -a byz_arr=(15 16 17 18 19 20)
-declare -a norm_arr=(5 4 3 2 1)
+#declare -a byz_arr=(15 16 17 18 19 20)
+#declare -a norm_arr=(5 4 3 2 1)
 
 
 #Doing 10 iterations could do more?
 config "REPS" 10
 config "LENGTH" 200
+let len=${#byz_arr[@]}-1
+echo ${len}
 #config "NOTES" "\"Variation of utility of the resource between 100 and 400\""
 
-for i in $(seq 0 ${#byz_arr[@]}); do
+for i in $(seq 0 ${len}); do
   echo ${byz_arr[i]}
   run ${byz_arr[i]} ${norm_arr[i]}
 done
