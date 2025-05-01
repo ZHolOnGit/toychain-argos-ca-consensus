@@ -21,10 +21,10 @@ export GENESISFILE="${DOCKERFOLDER}/geth/files/$GENESISNAME.json"
 
 # [ARGOS]
 #The byzantine one comes first cos they always vote for node 0
-export NUM1=1
+export NUM1=0
 export CON1="${EXPERIMENTFOLDER}/controllers/main_byzantine.py"
 
-export NUM2=19
+export NUM2=75
 export CON2="${EXPERIMENTFOLDER}/controllers/main.py"
 
 
@@ -33,7 +33,7 @@ export RABRANGE="3"
 export WHEELNOISE="0"
 export TPS=10
 export DENSITY="3"
-export FLOORNAME=Binary.png
+export FLOORNAME=0.75.png
 
 export NUMROBOTS=$(echo $NUM1+$NUM2 | bc)
 export ARENADIM=$(echo "scale=3 ; sqrt($NUMROBOTS/$DENSITY)" | bc)
@@ -62,7 +62,7 @@ export SEED=1500
 export TIMELIMIT=100
 export LENGTH=200
 export SLEEPTIME=5
-export REPS=10
+export REPS=1
 export NOTES="Variation of utility of the resource between 100 and 400"
 
 
