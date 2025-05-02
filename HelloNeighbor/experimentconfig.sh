@@ -21,10 +21,10 @@ export GENESISFILE="${DOCKERFOLDER}/geth/files/$GENESISNAME.json"
 
 # [ARGOS]
 #The byzantine one comes first cos they always vote for node 0
-export NUM1=0
+export NUM1=2
 export CON1="${EXPERIMENTFOLDER}/controllers/main_byzantine.py"
 
-export NUM2=75
+export NUM2=18
 export CON2="${EXPERIMENTFOLDER}/controllers/main.py"
 
 
@@ -62,7 +62,7 @@ export SEED=1500
 export TIMELIMIT=100
 export LENGTH=200
 export SLEEPTIME=5
-export REPS=1
+export REPS=10
 export NOTES="Variation of utility of the resource between 100 and 400"
 
 

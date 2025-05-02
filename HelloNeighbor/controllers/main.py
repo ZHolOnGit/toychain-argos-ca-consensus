@@ -339,7 +339,6 @@ def reset():
 def destroy():
     if startFlag:
         w3.stop_mining()
-
         txs = w3.get_all_transactions()
         if len(txs) != len(set([tx.id for tx in txs])):
             print(f'REPEATED TRANSACTIONS ON CHAIN: #{len(txs)-len(set([tx.id for tx in txs]))}')
