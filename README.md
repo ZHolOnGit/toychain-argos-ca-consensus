@@ -22,7 +22,7 @@ Step 1: Download and compile ARGoS version 59
 (More information at https://github.com/ilpincy/argos3)
 ```
 sudo apt install git build-essential cmake g++ libfreeimage-dev libfreeimageplus-dev freeglut3-dev \
-libxi-dev libxmu-dev liblua5.3-dev lua5.3 doxygen graphviz graphviz-dev asciidoc
+libxi-dev libxmu-dev liblua5.3-dev lua5.3 doxygen graphviz graphviz-dev asciidoc tmux docker 
 ```
 On Ubuntu 20.04 do
 ```
@@ -88,7 +88,7 @@ Edit ```experimentconfig.sh``` file to match your paths\
 Install some python packages used in the robot controllers
 ```
 sudo apt install python3-pip
-pip install aenum psutil hexbytes 
+pip install aenum psutil hexbytes tkinter
 ```
 Then run an experiment
 
