@@ -174,7 +174,7 @@ def controlstep():
         # Get the current peers from erb if they have higher difficulty chain, or if they have a different mempool hash, indicating that they
         #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
         #erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
-        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers} #TODO: add in neighbour selection
+        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers}
         if len(erb_enodes) > num_neighbours: # Same difference if the equality is included i guess
             select_neighbours = set(random.sample(list(erb_enodes), num_neighbours))
         else:
@@ -293,7 +293,7 @@ def controlstep():
         #########################################################################################################
 
         elif fsm.query(States.TRANSACT):
-            #TODO; find a way to stop the program once consensus has been reached
+
             last = w3.get_block('last')
             if last.state.consensus_reached and not stopFlag:
                 stopFlag = True
@@ -304,12 +304,10 @@ def controlstep():
             #Add the created transaction to the mempool?
             if not txs['hi'] and w3.mining_thread.state.value == 1:
                 neighbor = fsm.pass_along # It seems the destination selection has already been done for me
-                #TODO: Change txdata to reflect the ground recordings, have smart contracts for aggregation
                 txdata = {'function': 'Estimate', 'inputs': [gs.getAvg()]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
                 w3.send_transaction(txs['hi'])
                 print(f"ADDED TRANSACTION TO MEM, {txs['hi']}")
-            #TODO: The trasaction is no
             if w3.get_transaction_receipt(txs['hi'].id) and w3.mining_thread.state.value == 1:
                 txs['hi'] = None
                 fsm.setState(States.RANDOM, message = "Transaction success")
@@ -318,23 +316,7 @@ def controlstep():
 #### RESET-DESTROY STEPS ################################################################################################
 #########################################################################################################################
 
-def reset():
-    global startFlag, initial_reading_flag
-    #TODO: figure out what needs to be reset, just call init again?
-    """
-    I think the block visuliser will still be there, fine?
-    Things that need to be reset
-    Start flags, inital reading flag
-    peering and block clock (tho not sure what these do)
-    robot? - I dont really understand
-    Node things: have a node reset function, new genesis block
-    """
-    submodules[1].node_server_thread.stop()
-    clocks["peering"] = Timer(10)
-    clocks["block"]   = Timer(BLOCK_PERIOD)
-    startFlag = False
-    initial_reading_flag = False
-    init()
+
 
 def destroy():
     if startFlag:

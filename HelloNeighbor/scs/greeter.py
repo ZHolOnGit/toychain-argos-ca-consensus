@@ -13,7 +13,6 @@ class Contract(StateMixin):
             print("in with variables ")
             for var, value in state_variables.items(): setattr(self, var, value)     
 
-        #TODO: How are the balances set?
         else:
             self.n           = 0
             self.private     = {}
@@ -22,7 +21,7 @@ class Contract(StateMixin):
             # Init your own state variables
             self.frequency_estimate = 0
             self.open_escrow = []
-            self.outlier_threshold = 0.5
+            self.outlier_threshold = 0.4
             self.consensus_reached = False
             self.consensus_threshold = 0.02
             self.escrow_count = 0
@@ -30,15 +29,19 @@ class Contract(StateMixin):
             self.recording_array = []
 
 
-    #The way this is done is pretty strange
-    #The state is initilised in the genisis block, every subsequent block copies the state from the previous block
-    #This block / State is then propogated, this is what creates the distributed truth
+    #The state is initialised in the genesis block, every subsequent block copies the state from the previous block
+    #This block / State is then propagated, this is what creates the distributed truth
 
     #For now just do the outliers not being added, handle the money section later, if ever
     def Estimate(self, estimate):
+        """
+        This is the smart contract function for detecting outliers and aggregating the inliers to the frequency estimate
+        This is done by comparing each reading with the calculated estimate, if the difference is over a threshold than
+        the reading is considered an outlier and not included in the calculated estimate.
+        """
         #The first estimate will always be 0, cos the robots only had enough time to get one reading?
         #Solutions, give the robots time to record before doing the first transaction,
-        # get the inital estimate from the second block?
+        # get the initial estimate from the second block?
         self.open_escrow.append(estimate)
         if len(self.open_escrow) >= self.escrow_size:
             current_readings = self.open_escrow[:self.escrow_size]

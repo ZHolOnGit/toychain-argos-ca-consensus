@@ -87,7 +87,7 @@
     <distribute>
       <position method="uniform" min="-.516,-.516,0" max=".516,.516,0" /> 
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" /> 
-      <entity quantity="2" max_trials="15"> 
+      <entity quantity="8" max_trials="15"> 
         <e-puck id="bc" >
           <controller config="collab" />
         </e-puck>
@@ -97,7 +97,7 @@
     <distribute>
       <position method="uniform" min="-.516,-.516,0" max=".516,.516,0" /> 
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" /> 
-      <entity quantity="18" max_trials="15" base_num="2"> 
+      <entity quantity="12" max_trials="15" base_num="8"> 
         <e-puck id="gr" >
           <controller config="greedy" />
         </e-puck>

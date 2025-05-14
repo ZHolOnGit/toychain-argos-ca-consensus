@@ -21,13 +21,11 @@ export GENESISFILE="${DOCKERFOLDER}/geth/files/$GENESISNAME.json"
 
 # [ARGOS]
 #The byzantine one comes first cos they always vote for node 0
-export NUM1=2
+export NUM1=8
 export CON1="${EXPERIMENTFOLDER}/controllers/main_byzantine.py"
 
-export NUM2=18
+export NUM2=12
 export CON2="${EXPERIMENTFOLDER}/controllers/main.py"
-
-
 
 export RABRANGE="3"
 export WHEELNOISE="0"

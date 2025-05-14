@@ -176,7 +176,7 @@ def controlstep():
         # Get the current peers from erb if they have higher difficulty chain, or if they have a different mempool hash, indicating that they
         #Data at indicies 1,2 is the mining difficulty, at index 3 it is the mempool hash
         #erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers if peer.getData(indices=[1,2]) > w3.get_total_difficulty() or peer.data[3] != w3.mempool_hash(astype='int')}
-        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers} #TODO: add in neighbour selection
+        erb_enodes = {w3.gen_enode(peer.id) for peer in erb.peers}
         if len(erb_enodes) > num_neighbours: # Same difference if the equality is included i guess
             select_neighbours = set(random.sample(list(erb_enodes), num_neighbours))
         else:
@@ -292,7 +292,6 @@ def controlstep():
         #########################################################################################################
 
         elif fsm.query(States.TRANSACT):
-            #TODO; find a way to stop the program once consensus has been reached
             last = w3.get_block('last')
             if last.state.consensus_reached and not stopFlag:
                 stopFlag = True
@@ -304,8 +303,6 @@ def controlstep():
             if not txs['hi'] and w3.mining_thread.state.value == 1:
                 neighbor = fsm.pass_along # It seems the destination selection has already been done for me
                 #Input skewed for byzantine robots
-                #TODO: does it make a difference if i set it to 1 or 0?
-
                 # txdata = {'function': 'Estimate', 'inputs': [1]}
                 txdata = {'function': 'Estimate', 'inputs': [0]}
                 txs['hi'] = Transaction(sender = me.id, destination=neighbor.id, data = txdata, timestamp = w3.custom_timer.time(),source_pub_key=w3.public_key)
